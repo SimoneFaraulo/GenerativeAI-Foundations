@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt # Note: `import math` is not needed as torch.pi is used.
+from autoencoder import Autoencoder
 
 # --- 1. Generate Data on a 2D Manifold in 3D Space ---
 # The idea is to create 3D points (x, y, z) that lie on a 2D surface (a manifold).
@@ -29,44 +30,8 @@ z_data = torch.sin(torch.sqrt(x_data**2 + y_data**2))
 # This is our 3D dataset that lies on a 2D manifold.
 data = torch.stack([x_data, y_data, z_data], dim=1)
 
-# --- 2. Define the Autoencoder Model ---
-# An autoencoder is composed of an encoder and a decoder.
-# The encoder maps the input (3D) to a latent space (2D).
-# The decoder maps the latent space (2D) back to the output space (3D), trying to reconstruct the input.
-class Autoencoder(nn.Module):
-    # This class defines our autoencoder architecture, inheriting from PyTorch's base Module.
-    def __init__(self, input_dim, latent_dim):
-        # The constructor initializes the layers of the network.
-        super(Autoencoder, self).__init__()
-        # The encoder part of the network. It's a sequence of layers.
-        self.encoder = nn.Sequential(
-            # A linear layer that maps the input dimension (3) to a larger hidden dimension (128).
-            nn.Linear(input_dim, 128),
-            # A ReLU activation function to introduce non-linearity, allowing the network to learn complex mappings.
-            nn.ReLU(),
-            # A final linear layer that maps the hidden dimension (128) to the compressed latent dimension (2).
-            nn.Linear(128, latent_dim)
-        )
-        # The decoder part of the network. It has a symmetric structure to the encoder.
-        self.decoder = nn.Sequential(
-            # A linear layer that maps the latent dimension (2) back to a larger hidden dimension (128).
-            nn.Linear(latent_dim, 128),
-            # A ReLU activation function.
-            nn.ReLU(),
-            # A final linear layer that maps the hidden dimension (128) back to the original input dimension (3).
-            # No activation function is used here to allow the output to have any real value.
-            nn.Linear(128, input_dim)
-        )
 
-    def forward(self, x):
-        # The forward method defines how data flows through the network.
-        # First, the input `x` is passed through the encoder to get the latent representation.
-        latent = self.encoder(x)
-        # Then, the latent representation is passed through the decoder to get the reconstructed output.
-        reconstruction = self.decoder(latent)
-        return reconstruction
-
-# --- 3. Configure the Autoencoder and Training ---
+# --- 2. Configure the Autoencoder and Training ---
 # Define the dimensions for our network.
 input_dimension = 3  # Our data is (x, y, z)
 latent_dimension = 2 # We want to compress the 2D surface (manifold) to 2 dimensions.
@@ -83,7 +48,7 @@ criterion = nn.MSELoss()
 # It will adjust the model's weights to minimize the loss.
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-# --- 4. Training Loop ---
+# --- 3. Training Loop ---
 print("Starting Autoencoder training...")
 for epoch in range(num_epochs):
     # --- Forward pass ---
@@ -103,7 +68,7 @@ for epoch in range(num_epochs):
 
 print("Training complete.")
 
-# --- 5. Visualize the Results ---
+# --- 4. Visualize the Results ---
 # Set the model to evaluation mode. This disables layers like Dropout or BatchNorm if they were present.
 model.eval()
 # Use `torch.no_grad()` to disable gradient calculation, which speeds up inference and saves memory.
