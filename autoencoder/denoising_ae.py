@@ -48,7 +48,7 @@ num_epochs = 2000
 
 # Instantiate the model.
 # The `Autoencoder` class is assumed to be defined in `autoencoder.py`.
-model = Autoencoder(input_dimension, latent_dimension)
+model = Autoencoder(input_dimension, hidden_dim=9, latent_dim=latent_dimension)
 # Define the loss function. Mean Squared Error (MSE) is the standard choice for autoencoders.
 criterion = nn.MSELoss()
 # Define the optimizer. Adam is a popular and effective choice.
@@ -83,38 +83,49 @@ with torch.no_grad():
     reconstructed_data = model(noisy_data).numpy()
     # Get the latent space representations by passing the NOISY data through the encoder.
     latent_representations = model.encoder(noisy_data).numpy()
+    
+    # --- Genera dati campionando dallo spazio latente ---
+    # Stiamo campionando da una Gaussiana
+
+    # Determina la scala del campionamento in base alle rappresentazioni latenti reali
+    latent_mean = torch.mean(torch.from_numpy(latent_representations), axis=0)
+    latent_std = torch.std(torch.from_numpy(latent_representations), axis=0)
+    
+    # Campiona da una distribuzione simile a quella dei dati latenti
+    z_gen = (torch.randn(500, latent_dimension) * latent_std) + latent_mean 
+    generated_data = model.decoder(z_gen).numpy()
 
 # Convert tensors to NumPy arrays for plotting.
 original_data_np = data.numpy()
 noisy_data_np = noisy_data.numpy()
 
 # Create a figure that will contain all plots.
-fig = plt.figure(figsize=(32, 8))
+fig = plt.figure(figsize=(40, 8))
 fig.suptitle('Denoising Autoencoder Analysis', fontsize=16)
 
 # --- Subplot 1: Original Clean 3D Data ---
-ax1 = fig.add_subplot(1, 4, 1, projection='3d')
+ax1 = fig.add_subplot(1, 5, 1, projection='3d')
 ax1.scatter(original_data_np[:, 0], original_data_np[:, 1], original_data_np[:, 2], s=15, alpha=0.5, label='Original Clean Data', color='blue')
 ax1.set_title('1. Original Clean Data')
 ax1.set_xlabel('X'); ax1.set_ylabel('Y'); ax1.set_zlabel('Z')
 ax1.legend()
 
 # --- Subplot 2: Noisy Input 3D Data ---
-ax2 = fig.add_subplot(1, 4, 2, projection='3d')
+ax2 = fig.add_subplot(1, 5, 2, projection='3d')
 ax2.scatter(noisy_data_np[:, 0], noisy_data_np[:, 1], noisy_data_np[:, 2], s=15, alpha=0.5, label='Noisy Input Data', color='gray')
 ax2.set_title('2. Noisy Input Data')
 ax2.set_xlabel('X'); ax2.set_ylabel('Y'); ax2.set_zlabel('Z')
 ax2.legend()
 
 # --- Subplot 3: Reconstructed (Denoised) 3D Data ---
-ax3 = fig.add_subplot(1, 4, 3, projection='3d')
+ax3 = fig.add_subplot(1, 5, 3, projection='3d')
 ax3.scatter(reconstructed_data[:, 0], reconstructed_data[:, 1], reconstructed_data[:, 2], s=15, alpha=0.7, label='Reconstructed (Denoised) Data', color='red')
 ax3.set_title('3. Reconstructed (Denoised) Data')
 ax3.set_xlabel('X'); ax3.set_ylabel('Y'); ax3.set_zlabel('Z')
 ax3.legend()
 
 # --- Subplot 4: 2D Latent Space Plot ---
-ax4 = fig.add_subplot(1, 4, 4)
+ax4 = fig.add_subplot(1, 5, 4)
 scatter = ax4.scatter(latent_representations[:, 0], latent_representations[:, 1], c=r.numpy(), cmap='viridis', s=20, alpha=0.7)
 fig.colorbar(scatter, ax=ax4, label='Original Radius (r)')
 ax4.set_title('4. Latent Space of Noisy Data')
@@ -122,6 +133,15 @@ ax4.set_xlabel('Latent Dimension 1 (z1)')
 ax4.set_ylabel('Latent Dimension 2 (z2)')
 ax4.axis('equal')
 ax4.grid(True)
+
+# --- 4: Generated Data ---
+ax4 = fig.add_subplot(1, 5, 5, projection='3d')
+ax4.scatter(generated_data[:, 0], generated_data[:, 1], generated_data[:, 2], s=20, alpha=0.5, label='Generated Data', color='green')
+ax4.set_title('4. Generated Data (from random latent samples)')
+ax4.set_xlabel('X') 
+ax4.set_ylabel('Y')
+ax4.set_zlabel('Z')
+
 
 # Display the entire figure with all subplots.
 plt.show()

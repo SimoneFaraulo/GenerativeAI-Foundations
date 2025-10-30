@@ -40,7 +40,7 @@ learning_rate = 0.001
 num_epochs = 2000
 
 # Instantiate the model.
-model = Autoencoder(input_dimension, latent_dimension)
+model = Autoencoder(input_dimension, hidden_dim=9, latent_dim=latent_dimension)
 # Define the loss function. Mean Squared Error (MSE) is the standard choice for autoencoders,
 # as it measures the average squared difference between the input and its reconstruction.
 criterion = nn.MSELoss()
@@ -76,16 +76,27 @@ with torch.no_grad():
     # Get both the reconstructed data and the latent space representations in a single forward pass.
     reconstructed_data = model(data).numpy()
     latent_representations = model.encoder(data).numpy()
+    
+    # --- Genera dati campionando dallo spazio latente ---
+    # Stiamo campionando da una Gaussiana
+
+    # Determina la scala del campionamento in base alle rappresentazioni latenti reali
+    latent_mean = torch.mean(torch.from_numpy(latent_representations), axis=0)
+    latent_std = torch.std(torch.from_numpy(latent_representations), axis=0)
+    
+    # Campiona da una distribuzione simile a quella dei dati latenti
+    z_gen = (torch.randn(500, latent_dimension) * latent_std) + latent_mean 
+    generated_data = model.decoder(z_gen).numpy()
 
 # Convert the original data tensor to a NumPy array for plotting.
 original_data = data.numpy()
 
 # Create a figure that will contain both plots
-fig = plt.figure(figsize=(24, 8))
+fig = plt.figure(figsize=(32, 8))
 fig.suptitle('Autoencoder Analysis', fontsize=16)
 
 # --- Subplot 1: Original 3D Data ---
-ax1 = fig.add_subplot(1, 3, 1, projection='3d')
+ax1 = fig.add_subplot(1, 4, 1, projection='3d')
 # Create a 3D scatter plot of the original data points.
 ax1.scatter(original_data[:, 0], original_data[:, 1], original_data[:, 2], s=20, alpha=0.5, label='Original Data', color='blue')
 # Set the title and labels for the 3D plot.
@@ -96,7 +107,7 @@ ax1.set_zlabel('Z')
 ax1.legend()
 
 # --- Subplot 2: Reconstructed 3D Data ---
-ax2 = fig.add_subplot(1, 3, 2, projection='3d')
+ax2 = fig.add_subplot(1, 4, 2, projection='3d')
 ax2.scatter(reconstructed_data[:, 0], reconstructed_data[:, 1], reconstructed_data[:, 2], s=20, alpha=0.5, label='Reconstructed Data', color='red')
 ax2.set_title('Reconstructed 3D Data')
 ax2.set_xlabel('X')
@@ -106,7 +117,7 @@ ax2.legend()
 
 # --- Subplot 3: 2D Latent Space Plot ---
 # Add the third subplot to the figure for the 2D latent space.
-ax3 = fig.add_subplot(1, 3, 3)
+ax3 = fig.add_subplot(1, 4, 3)
 # Create a 2D scatter plot of the latent representations (z1, z2).
 # `c=r.numpy()`: This is a key part of the visualization. We color each point in the
 # latent space based on its original radius `r` in the (x, y) plane. This helps us
@@ -122,6 +133,14 @@ ax3.set_ylabel('Latent Dimension 2 (z2)')
 # Ensure the axes have the same scale to avoid distortion.
 ax3.axis('equal')
 ax3.grid(True)
+
+# --- 4: Generated Data ---
+ax4 = fig.add_subplot(1, 4, 4, projection='3d')
+ax4.scatter(generated_data[:, 0], generated_data[:, 1], generated_data[:, 2], s=20, alpha=0.5, label='Generated Data', color='green')
+ax4.set_title('4. Generated Data (from random latent samples)')
+ax4.set_xlabel('X') 
+ax4.set_ylabel('Y')
+ax4.set_zlabel('Z')
 
 # Display the entire figure with both subplots.
 plt.show()
