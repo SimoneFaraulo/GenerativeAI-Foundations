@@ -31,7 +31,11 @@ data = torch.stack([x_data, y_data, z_data], dim=1)
 # --- 3. Configure the Autoencoder and Training ---
 # Define the dimensions for our network.
 input_dimension = 3  # Our data is (x, y, z)
-latent_dimension = 3  # We want to compress the 2D surface (manifold) to 2 dimensions.
+# For a sparse autoencoder, the latent dimension is typically higher than the intrinsic manifold dimension,
+# often even higher than the input dimension, to encourage sparsity.
+# Here, we set it to be the same as the input dimension for demonstration.
+latent_dimension = 3 
+
 # Define the hyperparameters for the training process.
 learning_rate = 0.005
 num_epochs = 2000
