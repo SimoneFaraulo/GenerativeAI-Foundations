@@ -33,6 +33,15 @@ The project is organized into several key areas, each demonstrating a core princ
 - **Importance Sampling**: A Monte Carlo method for estimating properties of a target distribution using samples from a different proposal distribution.
 - **Density Ratio Estimation**: Using a classifier to learn the ratio `p(x)/q(x)` between two distributions.
 
+### 7. Transformer Architecture (`/transformer`)
+- **Positional Encoding**: Dimostrazione di come vengono iniettate le informazioni sulla posizione dei token, un passaggio fondamentale dato che il Transformer elabora i dati in parallelo.
+
+- **Multi-Head Attention**: Implementazione del meccanismo di attenzione (sia self-attention che cross-attention) che costituisce il cuore dell'architettura Transformer.
+
+- **Encoder & Decoder Layers**: Costruzione modulare dei singoli strati (Layer) dell'Encoder (con self-attention) e del Decoder (con masked self-attention e cross-attention).
+
+- **Transformer Seq2Seq**: Assemblaggio dei componenti in un modello Encoder-Decoder completo, l'architettura fondamentale alla base dei moderni LLM e dei modelli di traduzione.
+
 ## How to Run
 
 Each script is self-contained and can be run individually. Make sure you have PyTorch and Matplotlib installed:
