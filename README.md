@@ -27,7 +27,11 @@ The project is organized into several key areas, each demonstrating a core princ
 
 ### 5. Autoencoders (`/autoencoder`)
 - **Deterministic Autoencoder**: A simple MLP-based autoencoder is trained to learn a compressed representation of data lying on a 2D manifold (a "sombrero" surface) embedded in 3D space.
-- **Latent Space Visualization**: The script includes visualizations of both the 3D data reconstruction and the 2D latent space to show what the model has learned.
+- **Denoising Autoencoder**: An autoencoder is trained to reconstruct clean data from a noisy input, forcing it to learn more robust features of the underlying manifold.
+- **Variational Autoencoder (VAE)**: Implementation of a VAE to learn a structured, probabilistic latent space. The scripts demonstrate:
+  - **Balanced Training**: A well-behaved VAE with good reconstruction and generation.
+  - **Posterior Collapse**: A failure mode where the model ignores the input, resulting in poor reconstructions.
+  - **Poor Generation**: A failure mode where the model achieves excellent reconstruction but loses its ability to generate new, coherent data.
 
 ### 6. Distribution Shift (`/distribution_shift`)
 - **Importance Sampling**: A Monte Carlo method for estimating properties of a target distribution using samples from a different proposal distribution.
