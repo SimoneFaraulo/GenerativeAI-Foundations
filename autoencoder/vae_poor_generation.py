@@ -42,7 +42,7 @@ num_epochs = 2000
 # CRUCIAL: Set beta to a very low value.
 # This tells the model that reconstruction quality is much more important
 # than satisfying the KL divergence term.
-beta_value = 0.001
+beta_value = 0.00001
 
 # Instantiate the VAE model.
 model = VAE(input_dim, latent_dim)
