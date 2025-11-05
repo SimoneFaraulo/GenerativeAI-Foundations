@@ -32,6 +32,7 @@ The project is organized into several key areas, each demonstrating a core princ
   - **Balanced Training**: A well-behaved VAE with good reconstruction and generation.
   - **Posterior Collapse**: A failure mode where the model ignores the input, resulting in poor reconstructions.
   - **Poor Generation**: A failure mode where the model achieves excellent reconstruction but loses its ability to generate new, coherent data.
+- **Conditional VAE (CVAE)**: Un'estensione del VAE che incorpora un'informazione di condizionamento (es. un'etichetta di classe). L'encoder apprende `q(z|x,c)` e il decoder apprende `p(x|z,c)`. Lo script dimostra come il modello può generare campioni appartenenti a una classe specifica a comando.
 - **Vector Quantization VAE (VQ-VAE)**: Sostituisce lo spazio latente continuo con un "codebook" discreto. Dimostra la quantizzazione, l'addestramento tramite gradient pass-through e la commitment loss, e visualizza il fenomeno del "codebook collapse" in cui il modello utilizza solo un sottoinsieme degli archetipi disponibili.
 
 ### 6. Distribution Shift (`/distribution_shift`)
