@@ -48,6 +48,12 @@ The project is organized into several key areas, each demonstrating a core princ
 
 - **Transformer Seq2Seq**: Assemblaggio dei componenti in un modello Encoder-Decoder completo, l'architettura fondamentale alla base dei moderni LLM e dei modelli di traduzione.
 
+### 8. Generative Adversarial Network (GAN) (`/gan`)
+- **Simple GAN**: Implementazione di una GAN di base (non condizionata) addestrata a generare punti in un piano 2D, imparando una distribuzione semplice.
+
+- **Conditional GAN (CGAN)**: Estensione della GAN per includere informazioni di condizionamento (come etichette di classe).
+
+- **Stabilizzazione dell'Addestramento**: Dimostrazione di tecniche comuni per stabilizzare l'addestramento avversariale, tra cui il **Label Smoothing** (per prevenire l'eccesso di confidenza del discriminatore) e l'**Instance Noise** (per "sfocare" le distribuzioni e prevenire gradienti nulli).
 ## How to Run
 
 Each script is self-contained and can be run individually. Make sure you have PyTorch and Matplotlib installed:
