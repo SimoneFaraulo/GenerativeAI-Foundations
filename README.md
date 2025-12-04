@@ -48,6 +48,26 @@ The project is organized into several key areas, each demonstrating a core princ
 
 - **Transformer Seq2Seq**: Assemblaggio dei componenti in un modello Encoder-Decoder completo, l'architettura fondamentale alla base dei moderni LLM e dei modelli di traduzione.
 
+#### 7.1 LLM Optimization & Efficient Inference (`/transformer/optimization`)
+
+Una raccolta di tecniche moderne utilizzate per rendere l'inferenza e il fine-tuning dei Large Language Models (LLM) più efficienti in termini di memoria e calcolo.
+
+  - **KV Caching (`kv_cache.py`)**: Implementazione del meccanismo di caching per Keys e Values. Fondamentale per la generazione autoregressiva, permette di riutilizzare i calcoli dei token passati invece di ricalcolarli ad ogni step.
+
+  - **Efficient Attention Variants (`attention_variants.py`)**: Implementazione e confronto tra le varianti di attenzione che riducono il collo di bottiglia della memoria:
+
+      - **Multi-Query Attention (MQA)**: Condivide un'unica testa per Key e Value tra tutte le teste di Query.
+      - **Grouped-Query Attention (GQA)**: Un compromesso bilanciato che divide le teste di Query in gruppi, assegnando a ciascun gruppo una singola testa Key/Value (usato in Llama 2/3).
+        - *Demo*: `demo_gqa_inference.py` simula un ciclo di generazione mostrando la riduzione dei parametri e l'interazione con la KV Cache.
+
+  - **Low-Rank Adaptation (LoRA) (`lora.py`)**: Implementazione della tecnica di Parameter-Efficient Fine-Tuning (PEFT) più diffusa. Dimostra come "congelare" i pesi del modello originale e addestrare matrici di rango ridotto ($A$ e $B$) per adattare il modello con un numero minimo di parametri.
+
+      - *Demo*: `demo_lora.py` confronta il numero di parametri addestrabili e verifica l'aggiornamento dei pesi.
+
+  - **Multi-Head Latent Attention (MLA) (`mla.py`)**: Implementazione dell'architettura di attenzione avanzata introdotta nei modelli **DeepSeek**. Comprime le matrici Key e Value in un vettore latente a bassa dimensione, riducendo drasticamente l'impronta di memoria della cache (KV Cache) durante l'inferenza.
+
+      - *Demo*: `demo_mla.py` calcola e confronta il risparmio di memoria tra MHA standard e MLA.
+
 ### 8. Generative Adversarial Network (GAN) (`/gan`)
 - **Simple GAN**: Implementazione di una GAN di base (non condizionata) addestrata a generare punti in un piano 2D, imparando una distribuzione semplice.
 
